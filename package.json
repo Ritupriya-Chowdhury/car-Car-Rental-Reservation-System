@@ -25,6 +25,7 @@
     "http-status": "^1.7.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.4",
+    "ts-node-dev": "^2.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
