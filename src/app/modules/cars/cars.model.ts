@@ -1,8 +1,9 @@
-import { Schema, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 import { TCars } from './cars.interface';
 
 const carsSchema = new Schema<TCars>(
   {
+  
     name: {
       type: String,
       required: [true, 'Name is required'],

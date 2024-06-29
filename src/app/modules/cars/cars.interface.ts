@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export type TCars = {
-    _id?:Types.ObjectId;
+    _id: any;
     name: string;
     description: string;
     color: string;
