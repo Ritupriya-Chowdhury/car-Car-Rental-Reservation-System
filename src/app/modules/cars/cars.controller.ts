@@ -7,13 +7,26 @@ import { CarsServices } from "./cars.service";
 const createCars = catchAsync(async (req, res) => {
 
     const result = await CarsServices.createCarsIntoDB(req.body);
+    // console.log({result})
 
     sendResponse(res, {
       success: true,
       statusCode:201,
       message: 'Car created successfully',
-      data: result
-      ,
+      data: {
+        _id: result._id,
+        name: result.name,
+        description: result.description,
+        color: result.color,
+        isElectric:result.isElectric,
+        features: result.features,
+        pricePerHour: result.pricePerHour,
+        status: result.status,
+        isDeleted:result.isDeleted,
+        createdAt: result.createdAt,
+        updatedAt: result.updatedAt,
+
+      },
     });
  
 });

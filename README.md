@@ -1,91 +1,58 @@
-# Meeting Room Booking System
-[Vercel meeting room api]: (https://ass-3-nine.vercel.app)
+# Car Rental Reservation System
+[Vercel Car Rental api]: (https://car-rental-sooty-theta.vercel.app)
 
 ## Uses Technology
  express, mongoose, typescript, cors, dotenv, eslint, prettier, http-status, bcrypt, ts-node-dev, Jsonwebtoken.
 
 ## Applications
 
-### User Api:
-1.[User Signup api]: (https://ass-3-nine.vercel.app/api/auth/signup)
+### All Api
+1.[User Signup api]: (https://car-rental-sooty-theta.vercel.app/api/auth/signup)
 
-2.[User login api]: (https://ass-3-nine.vercel.app/api/auth/login)
+2.[User login api]: (https://car-rental-sooty-theta.vercel.app/api/auth/signin)
 
+3.[Create a Car api- POST]: (https://car-rental-sooty-theta.vercel.app/api/cars)
 
-### Meeting Rooms Api:
-1.[Create Room api- POST]: (https://ass-3-nine.vercel.app/api/rooms)
+4.[Get All Cars api- GET]: (https://car-rental-sooty-theta.vercel.app/api/cars)
 
-2.[Get All Room api- GET]: (https://ass-3-nine.vercel.app/api/rooms)
+5.[Get A Car api- GET]: (https://car-rental-sooty-theta.vercel.app/api/cars/6680fba8b9f5dcd1ed1f3737)
 
-3.[Get A Room api- GET]: (https://ass-3-nine.vercel.app/rooms/6676e1126aee288728c6d724)
+6.[Update A Car api- PUT]: (https://car-rental-sooty-theta.vercel.app/api/cars/6680fba8b9f5dcd1ed1f3737)
 
-4.[Update Room api- PUT]: (https://ass-3-nine.vercel.app/rooms/6676e1126aee288728c6d724)
+7.[Delete A Car api- DELETE]: (https://car-rental-sooty-theta.vercel.app/api/cars/6680fba8b9f5dcd1ed1f3737)
 
-5.[Delete Room api- DELETE]: (https://ass-3-nine.vercel.app/api/rooms/6676eb42ecbf6cd117b557e9)
+8.[Get available Bookings api- GET]: (https://car-rental-sooty-theta.vercel.app/api/bookings)
+[or]: (https://car-rental-sooty-theta.vercel.app/api/bookings?carId=6680fc4cb9f5dcd1ed1f373a&date=2024-06-15)
 
+9.[Book A Car api- POST]: (https://car-rental-sooty-theta.vercel.app/api/bookings)
 
-### Slot Api:
-1.[Create Slots api- POST]: (https://ass-3-nine.vercel.app/api/slots)
+10.[Get User Booking api- POST]: (https://car-rental-sooty-theta.vercel.app/api/bookings/my-bookings)
 
-2.[Get available Slots api- GET]: (https://ass-3-nine.vercel.app/api/slots/availability)
-[or]: (https://ass-3-nine.vercel.app/api/slots/availability?date=2024-06-12&roomId=6676e0f66aee288728c6d721)
-
-
-### Booking Api:
-1.[Add Booking api- POST]: (https://ass-3-nine.vercel.app/api/bookings)
-
-2.[Get All Bookings api- GET]: (https://ass-3-nine.vercel.app/api/bookings)
-
-3.[Update Bookings api- PUT]: (https://ass-3-nine.vercel.app/api/bookings/6677029e83341448ff603d4d)
-
-4.[Delete Booking api- DELETE]: (https://ass-3-nine.vercel.app/api/bookings/6677029e83341448ff603d4d)
-
-5.[My Bookings api- GET]: (https://ass-3-nine.vercel.app/api/my-bookings)
+11.[Return Car api- GET]: (https://car-rental-sooty-theta.vercel.app/api/cars/return)
 
 
-## Routes Which Only Accessible By Admin:
-
-1.[Create Room api- POST]: (https://ass-3-nine.vercel.app/api/rooms)
-
-2.[Update Bookings api- PUT]: (https://ass-3-nine.vercel.app/api/bookings/66767e0379b469bb5c584ecc)
-
-3.[Delete Booking api- DELETE]: (https://ass-3-nine.vercel.app/api/bookings/66767e0379b469bb5c584ecc)
-
-4.[Create Slots api- POST]: (https://ass-3-nine.vercel.app/api/slots)
-
-5.[Get All Bookings api- GET]: (https://ass-3-nine.vercel.app/api/bookings)
-
-6.[Update Bookings api- PUT]: (https://ass-3-nine.vercel.app/api/bookings/6677029e83341448ff603d4d)
-
-7.[Delete Booking api- DELETE]: (https://ass-3-nine.vercel.app/api/bookings/6677029e83341448ff603d4d)
 
 
-## Routes Which Only Accessible By User:
-1.[Add Booking api- POST]: (https://ass-3-nine.vercel.app/api/bookings)
 
-2.[My Bookings api- GET]: (https://ass-3-nine.vercel.app/api/my-bookings)
-
-## User Data
+## User SignIn Data
 
 {
-    "name": "John Doe",
     "email": "john.doe@example.com",
     "password": "p@ssw0rd",
-    "phone": "123-456-7890",
-    "role": "user",
-    "address": "123 Main St"
+}
+
+{
+  "email": "janesmith@example.com",
+  "password": "securepassword456"
 }
 
 
-## Admin Data
+## Admin SignIn Data
 
 {
-  "name": "Programming Hero",
   "email": "web@programming-hero.com",
-  "password": "ph-password",
-  "phone": "1234567890",
-  "role": "admin", 
-  "address": "123 Main Street, City, Country"
+  "password": "ph-password"
+  
 }
 
 
