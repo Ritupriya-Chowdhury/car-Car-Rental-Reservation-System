@@ -38,7 +38,7 @@
 
 {
     "email": "john.doe@example.com",
-    "password": "p@ssw0rd",
+    "password": "p@ssw0rd"
 }
 
 {
