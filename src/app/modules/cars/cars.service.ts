@@ -66,35 +66,67 @@ const getSingleCarFromDB = async (id: string) => {
  };
  
  // Get all cars
- const getAllCarsFromDB = async () => {
- 
-   const session=await mongoose.startSession();
- 
-   try{
-     session.startTransaction();
- 
-    
-     const result = await Cars.find();
- 
-     if (!result.length) {
-       throw new AppError(httpStatus.NOT_FOUND, 'No Data Found')
-     }
- 
-     await session.commitTransaction();
-     await session.endSession();
- 
-     return result;
- 
-  }catch(err:any){
-   await session.abortTransaction();
-   await session.endSession();
-   throw new Error(err);
- 
+ const getAllCarsFromDB = async (filters: any) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    const query: any = { isDeleted: { $ne: true } };
+
+    // Filter for car type, price range, electric status, and location
+    if (filters.type) {
+      query.type = filters.type;
+    }
+
+    if (filters.minPrice && filters.maxPrice) {
+      query.pricePerHour = {
+        $gte: filters.minPrice,
+        $lte: filters.maxPrice,
+      };
+    }
+
+    if (filters.isElectric !== undefined) {
+      query.isElectric = filters.isElectric;
+    }
+
+    if (filters.location) {
+      query.location = filters.location;
+    }
+
+    // Availability filters based on date range
+    if (filters.startDate && filters.endDate) {
+      const startDate = new Date(filters.startDate);
+      const endDate = new Date(filters.endDate);
+      
+      // Add date range filter for availability
+      query.$or = [
+        { status: 'available' }, 
+        {
+          $and: [
+            { startDate: { $not: { $lte: endDate } } },  
+            { endDate: { $not: { $gte: startDate } } },
+          ],
+        },
+      ];
+    }
+
+    const result = await Cars.find(query);
+
+    if (!result.length) {
+      throw new AppError(httpStatus.NOT_FOUND, 'No Cars Found');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (err: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(err);
   }
-   
-  
- };
- 
+};
+
  
  //update meeting room
  const updateCarIntoDB = async ( id: string, payload: Partial<TCars>) => {
@@ -164,7 +196,40 @@ const getSingleCarFromDB = async (id: string) => {
   
  };
  
- 
+ const checkCarAvailability = async (location: string, startDate: Date, endDate: Date) => {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    // Query to find cars in the specific location and not booked within the date range
+    const result = await Cars.find({
+      location,
+      $or: [
+        { status: 'available' },  // Assuming status is a field for car availability
+        {
+          $and: [
+            { startDate: { $not: { $lte: endDate } } },  // Not booked for the provided dates
+            { endDate: { $not: { $gte: startDate } } },
+          ],
+        },
+      ],
+    });
+
+    if (!result.length) {
+      throw new AppError(httpStatus.NOT_FOUND, 'No Available Cars Found');
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+
+    return result;
+  } catch (err: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(err);
+  }
+};
 
 
   export const CarsServices = {
@@ -172,7 +237,8 @@ const getSingleCarFromDB = async (id: string) => {
     getSingleCarFromDB,
     getAllCarsFromDB,
     updateCarIntoDB,
-    deleteCarFromDB 
+    deleteCarFromDB,
+    checkCarAvailability, 
 };
   
   

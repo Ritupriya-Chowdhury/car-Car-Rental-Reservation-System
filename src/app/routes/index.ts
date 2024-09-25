@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { AuthRoutes } from '../modules/auth/auth.routes';
 import { CarsRoutes } from '../modules/cars/cars.routes';
 import { BookingRoutes } from '../modules/booking/booking.routes';
+import { FeaturedCarsRoutes } from '../modules/featuredCars/featuredCars.routes';
 
 
 
@@ -21,10 +22,10 @@ const moduleRoutes = [
     path: '/bookings',
     route: BookingRoutes,
   },
-  // {
-  //   path: '/return',
-  //   route: CarsReturnRoutes,
-  // },
+  {
+    path: '/featured_cars',
+    route: FeaturedCarsRoutes,
+  },
   
  
  ]

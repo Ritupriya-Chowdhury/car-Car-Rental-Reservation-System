@@ -2,12 +2,19 @@ import { Schema, Types, model } from 'mongoose';
 import { TCars } from './cars.interface';
 
 const carsSchema = new Schema<TCars>(
+  
   {
     name: {
       type: String,
       required: [true, 'Name is required'],
       trim: true,
     },
+    image: {
+      type: String,
+      required: [true, 'Image is required'],
+      trim: true,
+    },
+
     description: {
       type: String,
       required: [true, 'Description is required'],
@@ -25,13 +32,28 @@ const carsSchema = new Schema<TCars>(
       required: [true, 'Features is required'],
     },
     pricePerHour: {
-      type: Number,  // corrected from 'types' to 'type'
+      type: Number,  
       required: [true, 'PricePerHour is required'],
     },
     status: {
-      type: String,  // corrected from 'types' to 'type'
+      type: String,  
       default: 'available',
     },
+    location: {
+      type: String,  
+     default: 'Chattogram'
+    },
+    startDate: {
+      type: String,  
+   
+    },
+   endDate: {
+      type: String,  
+   
+    },
+    carType: { 
+      type: String, 
+     }, 
     isDeleted: {
       type: Boolean,
       default: false,
@@ -58,7 +80,7 @@ carsSchema.pre('aggregate', function (next) {
   next();
 });
 
-// Creating a custom static method
+
 carsSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Cars.findOne({ id });
   return existingUser;

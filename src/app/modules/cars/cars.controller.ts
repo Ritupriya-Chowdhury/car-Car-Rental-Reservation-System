@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { CarsServices } from "./cars.service";
+import AppError from "../../errors/AppError";
 
 //create car
 const createCars = catchAsync(async (req, res) => {
@@ -51,18 +52,27 @@ const getSingleCar = catchAsync(async (req, res,next) => {
 
 
 // Get All Cars 
-const getAllCars = catchAsync(async (req, res,next) => {
- 
-    const result = await CarsServices.getAllCarsFromDB();
+const getAllCars = catchAsync(async (req, res) => {
+  const filters = {
+    type: req.query.type,
+    minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
+    maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
+    isElectric: req.query.isElectric === 'true', 
+    location: req.query.location,
+    startDate: req.query.startDate, 
+    endDate: req.query.endDate,     
+  };
 
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Cars retrieved successfully',
-      data: result,
-    });
- 
+  const result = await CarsServices.getAllCarsFromDB(filters);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Cars retrieved successfully",
+    data: result,
+  });
 });
+
 
 
 // Update Car
@@ -84,7 +94,7 @@ const updateCar = catchAsync(async (req, res) => {
 const deleteCar = catchAsync(async (req, res,next) => {
   const {id}  = req.params;
 
-  // console.log(id);
+
 
   const result = await CarsServices.deleteCarFromDB(id);
 
@@ -96,12 +106,35 @@ const deleteCar = catchAsync(async (req, res,next) => {
   });
 });
 
+const checkCarAvailability = catchAsync(async (req, res) => {
+  const { location, startDate, endDate } = req.query;
+
+  if (!location || !startDate || !endDate) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Location, startDate, and endDate are required');
+  }
+
+  const result = await CarsServices.checkCarAvailability(
+    location as string,
+    new Date(startDate as string),
+    new Date(endDate as string)
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Available cars retrieved successfully',
+    data: result,
+  });
+});
+
+
 export const CarsControllers = {
   createCars,
   getSingleCar,
   getAllCars,
   updateCar,
-  deleteCar
+  deleteCar,
+  checkCarAvailability,
 };
 
 

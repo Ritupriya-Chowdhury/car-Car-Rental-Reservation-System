@@ -9,7 +9,10 @@ const app : Application = express()
 
 //parser
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your client's origin
+  credentials: true
+}));
 
 const getController=(req:Request, res:Response) => {
   res.send('Hello World!')

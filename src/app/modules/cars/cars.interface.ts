@@ -1,16 +1,18 @@
-import { Types } from "mongoose";
-
 export type TCars = {
-    _id: any;
-    name: string;
-    description: string;
-    color: string;
-    isElectric: boolean;
-    features: string[];
-    pricePerHour: number;
-    status: 'available' | 'unavailable',
-    isDeleted?: boolean;
-    createdAt: Date,
-    updatedAt: Date,
-
-  };
+  _id: any;
+  name: string;
+  image: string;
+  description: string;
+  color: string;
+  isElectric: boolean;
+  features: string[];
+  pricePerHour: number;
+  status: 'available' | 'unavailable';
+  location: string;
+  startDate: string;
+  endDate: string;
+  isDeleted?: boolean;
+  carType: string; 
+  createdAt: Date;
+  updatedAt: Date;
+};
