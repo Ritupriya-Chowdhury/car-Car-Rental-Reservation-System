@@ -12,7 +12,7 @@ const createCarsZodSchema = z.object({
     location: z.string(),
     startDate: z.string(),
     endDate: z.string(),
-    isDeleted: z.boolean().optional(),
+    
   }),
 });
 

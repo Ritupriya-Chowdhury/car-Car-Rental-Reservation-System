@@ -64,18 +64,21 @@ const getSingleCarFromDB = async (id: string) => {
    
   
  };
- 
- // Get all cars
+ // Get all car from db
  const getAllCarsFromDB = async (filters: any) => {
   const session = await mongoose.startSession();
+  
   try {
     session.startTransaction();
 
     const query: any = { isDeleted: { $ne: true } };
 
-    // Filter for car type, price range, electric status, and location
-    if (filters.type) {
-      query.type = filters.type;
+    if (filters.name) {
+      query.name = { $regex: filters.name, $options: 'i' };  // Case-insensitive search by car name
+    }
+
+    if (filters.carType) {
+      query.carType = filters.carType;
     }
 
     if (filters.minPrice && filters.maxPrice) {
@@ -93,14 +96,16 @@ const getSingleCarFromDB = async (id: string) => {
       query.location = filters.location;
     }
 
-    // Availability filters based on date range
+    if (filters.features && filters.features.length > 0) {
+      query.features = { $all: filters.features };  // Ensure all features match
+    }
+
     if (filters.startDate && filters.endDate) {
       const startDate = new Date(filters.startDate);
       const endDate = new Date(filters.endDate);
       
-      // Add date range filter for availability
       query.$or = [
-        { status: 'available' }, 
+        { status: 'available' },
         {
           $and: [
             { startDate: { $not: { $lte: endDate } } },  
@@ -117,12 +122,12 @@ const getSingleCarFromDB = async (id: string) => {
     }
 
     await session.commitTransaction();
-    await session.endSession();
+    session.endSession();
 
     return result;
   } catch (err: any) {
     await session.abortTransaction();
-    await session.endSession();
+    session.endSession();
     throw new Error(err);
   }
 };

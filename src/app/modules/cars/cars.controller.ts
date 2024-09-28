@@ -14,20 +14,7 @@ const createCars = catchAsync(async (req, res) => {
       success: true,
       statusCode:201,
       message: 'Car created successfully',
-      data: {
-        _id: result._id,
-        name: result.name,
-        description: result.description,
-        color: result.color,
-        isElectric:result.isElectric,
-        features: result.features,
-        pricePerHour: result.pricePerHour,
-        status: result.status,
-        isDeleted:result.isDeleted,
-        createdAt: result.createdAt,
-        updatedAt: result.updatedAt,
-
-      },
+      data: result,
     });
  
 });
@@ -54,13 +41,16 @@ const getSingleCar = catchAsync(async (req, res,next) => {
 // Get All Cars 
 const getAllCars = catchAsync(async (req, res) => {
   const filters = {
-    type: req.query.type,
+    name: req.query.name as string, // Cast to string if necessary
+    type: req.query.type as string,
     minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
     maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
-    isElectric: req.query.isElectric === 'true', 
-    location: req.query.location,
-    startDate: req.query.startDate, 
-    endDate: req.query.endDate,     
+    
+    features: typeof req.query.features === 'string' ? req.query.features.split(',') : [], 
+    isElectric: req.query.isElectric === 'true',
+    location: req.query.location as string,
+    startDate: req.query.startDate as string, 
+    endDate: req.query.endDate as string,     
   };
 
   const result = await CarsServices.getAllCarsFromDB(filters);
@@ -72,6 +62,7 @@ const getAllCars = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
 
 
 
