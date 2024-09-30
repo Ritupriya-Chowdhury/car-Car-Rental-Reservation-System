@@ -10,6 +10,8 @@ const createCarsZodSchema = z.object({
     features: z.array(z.string()),
     pricePerHour: z.number(),
     location: z.string(),
+    carType:z.string(),
+    customerReviews: z.array(z.string()),
     startDate: z.string(),
     endDate: z.string(),
     
@@ -27,6 +29,7 @@ const updateCarsZodSchema = z.object({
     pricePerHour: z.number().optional(),
     status: z.enum(['available', 'unavailable']).optional(),
     location: z.string().optional(),
+    customerReviews: z.array(z.string()),
     startDate: z.string().optional(),
     endDate: z.string().optional(),
     isDeleted: z.boolean().optional(),

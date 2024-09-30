@@ -74,11 +74,11 @@ const getSingleCarFromDB = async (id: string) => {
     const query: any = { isDeleted: { $ne: true } };
 
     if (filters.name) {
-      query.name = { $regex: filters.name, $options: 'i' };  // Case-insensitive search by car name
+      query.name = { $regex: filters.name, $options: 'i' };  
     }
 
-    if (filters.carType) {
-      query.carType = filters.carType;
+    if (filters.type) {
+      query.carType = { $regex: filters.type, $options: 'i' };
     }
 
     if (filters.minPrice && filters.maxPrice) {
@@ -114,7 +114,7 @@ const getSingleCarFromDB = async (id: string) => {
         },
       ];
     }
-
+      console.log(query);
     const result = await Cars.find(query);
 
     if (!result.length) {
@@ -132,7 +132,6 @@ const getSingleCarFromDB = async (id: string) => {
   }
 };
 
- 
  //update meeting room
  const updateCarIntoDB = async ( id: string, payload: Partial<TCars>) => {
  

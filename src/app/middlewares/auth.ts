@@ -10,13 +10,19 @@ import catchAsync from '../utils/catchAsync';
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+let decoded;
+   if (!authHeader) {
       throw new AppError(httpStatus.UNAUTHORIZED, 'You have no access to this route!');
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
+    const token = authHeader;
+    try{
+       decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
+
+    }catch(err){
+      throw new AppError(httpStatus.UNAUTHORIZED,'Unauthorized')
+    }
+   
 
     const { email, role } = decoded;
     const user = await User.isUserExistsByEmail(email);

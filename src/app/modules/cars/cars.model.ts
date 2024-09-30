@@ -54,6 +54,9 @@ const carsSchema = new Schema<TCars>(
     carType: { 
       type: String, 
      }, 
+    customerReviews: { 
+      type: [String], 
+     }, 
     isDeleted: {
       type: Boolean,
       default: false,

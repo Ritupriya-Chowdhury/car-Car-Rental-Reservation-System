@@ -1,3 +1,4 @@
+import  jwt, { JwtPayload }  from 'jsonwebtoken';
 import mongoose from "mongoose";
 import config from "../../config";
 import { TUser } from "../user/user.interface";
@@ -83,11 +84,49 @@ const jwtPayload = {
   };
    };
 
+   const refreshToken = async (token: string) => {
+    // checking if the given token is valid
+    const decoded = jwt.verify(
+      token,
+      config.jwt_refresh_secret as string,
+    ) as JwtPayload;
+  
+    const { email, iat } = decoded;
+  
+    // checking if the user is exist
+    const user = await User.isUserExistsByEmail(email);
+  
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+    }
+  
+  
+    
+  
+
+  
+    const jwtPayload = {
+      email: user.email,
+      role: user.role,
+    };
+  
+    const accessToken = createToken(
+      jwtPayload,
+      config.jwt_access_secret as string,
+      config.jwt_access_expires_in as string,
+    );
+  
+    return {
+      accessToken,
+    };
+  };
+
 
 
   
   export const AuthServices = {
     createUserIntoDB,
-    signInUser
+    signInUser,
+    refreshToken
 
   };

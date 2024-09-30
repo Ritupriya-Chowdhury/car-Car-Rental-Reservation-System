@@ -40,9 +40,11 @@ const getSingleCar = catchAsync(async (req, res,next) => {
 
 // Get All Cars 
 const getAllCars = catchAsync(async (req, res) => {
+  console.log(req.query)
   const filters = {
-    name: req.query.name as string, // Cast to string if necessary
-    type: req.query.type as string,
+    name: req.query.name as string, 
+    type: req.query.carType as string,
+    
     minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
     maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
     
@@ -52,14 +54,18 @@ const getAllCars = catchAsync(async (req, res) => {
     startDate: req.query.startDate as string, 
     endDate: req.query.endDate as string,     
   };
+  console.log(filters.type)
 
+  console.log(filters)
   const result = await CarsServices.getAllCarsFromDB(filters);
+
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Cars retrieved successfully",
     data: result,
+   
   });
 });
 

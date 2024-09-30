@@ -13,6 +13,7 @@ export type TCars = {
   endDate: string;
   isDeleted?: boolean;
   carType: string; 
+  customerReviews: string[]; 
   createdAt: Date;
   updatedAt: Date;
 };
