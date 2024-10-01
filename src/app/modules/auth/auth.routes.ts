@@ -24,4 +24,7 @@ router.post(
     AuthControllers.refreshToken
 );
 
+router.patch('/:id', AuthControllers.updateUserStatus);
+router.patch('/:id', AuthControllers.updateUserRole);
+
 export const AuthRoutes=router;

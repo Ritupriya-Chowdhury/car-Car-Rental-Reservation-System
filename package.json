@@ -19,6 +19,7 @@
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.7",
+    "@types/nodemailer": "^6.4.16",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -27,6 +28,7 @@
     "http-status": "^1.7.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.4",
+    "nodemailer": "^6.9.15",
     "ts-node-dev": "^2.0.0",
     "zod": "^3.23.8"
   },

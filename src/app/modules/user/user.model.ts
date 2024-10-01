@@ -3,6 +3,7 @@ import { Schema, model } from 'mongoose';
 import { TUser, UserModel } from './user.interface';
 import config from '../../config';
 
+// Define the schema
 const userSchema = new Schema<TUser, UserModel>(
   {
     name: {
@@ -12,7 +13,7 @@ const userSchema = new Schema<TUser, UserModel>(
     },
     email: {
       type: String,
-       required: [true, 'Email is required'],
+      required: [true, 'Email is required'],
       unique: true,
     },
     password: {
@@ -24,7 +25,6 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       enum: ['admin', 'user'],
       default: 'user',
-     
     },
     phone: {
       type: String,
@@ -35,14 +35,24 @@ const userSchema = new Schema<TUser, UserModel>(
       type: String,
       required: [true, 'Address is required'],
     },
-
+    status: {
+      type: String,
+      enum: ['activate', 'block'],
+      default: 'activate',
+    },
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
-  },
-  
+  }
 );
 
+// Hash password before saving the user
 userSchema.pre('save', async function (next) {
   const user = this;
   if (user.isModified('password')) {
@@ -51,22 +61,38 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+// Remove password from the result after saving the user
 userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
 });
 
-userSchema.statics.isUserExistsByEmail = async function (email: string) {
-  return await User.findOne( {email} ).select('+password');
+// Add static methods for reset password functionality
+userSchema.statics.setResetPasswordToken = async function (email: string, token: string) {
+  const user = await this.findOne({ email });
+  if (!user) throw new Error('User not found');
+
+  user.resetPasswordToken = token;
+  user.resetPasswordExpires = new Date(Date.now() + 3600000); // Token valid for 1 hour
+  await user.save();
 };
 
-userSchema.statics.isPasswordMatched = async function (
-  plainTextPassword,
-  hashedPassword,
-) {
-  return await bcrypt.compare(plainTextPassword, hashedPassword);
+userSchema.statics.verifyResetPasswordToken = async function (token: string) {
+  const user = await this.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: new Date() } });
+  return user;
 };
 
+userSchema.statics.clearResetPasswordToken = async function (userId: string) {
+  const user = await this.findById(userId);
+  if (!user) throw new Error('User not found');
 
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save();
+};
+export interface TUserDocument extends TUser, Document {
+  save(): Promise<TUserDocument>;
+}
 
+// Export the model
 export const User = model<TUser, UserModel>('User', userSchema);
