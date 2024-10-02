@@ -13,6 +13,7 @@ router.post(
   auth(USER_ROLE.user),
   validateRequest(BookingZodSchema.createCarZodSchema ),
    BookingControllers.createBooking
+   
 );
 router.get(
   '',

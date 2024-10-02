@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
 import config from "../../config";
+import AppError from "../../errors/AppError";
 
 // Controller to handle user creation
 const createUser = catchAsync(async (req, res) => {
@@ -22,6 +23,7 @@ const signInUser = catchAsync(async (req, res) => {
   const payload = req.body;
   const result = await AuthServices.signInUser(payload);
 
+  // Set refresh token in a cookie
   const { refreshToken } = result;
   res.cookie("refreshToken", refreshToken, {
     secure: config.NODE_ENV === "production",
@@ -39,6 +41,11 @@ const signInUser = catchAsync(async (req, res) => {
 // Controller to handle token refresh
 const refreshToken = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'Refresh token not provided');
+  }
+
   const result = await AuthServices.refreshToken(refreshToken);
 
   sendResponse(res, {
@@ -49,9 +56,39 @@ const refreshToken = catchAsync(async (req, res) => {
   });
 });
 
+// Controller to request password reset
+const requestPasswordReset = catchAsync(async (req, res) => {
+  const { email } = req.body;
+  await AuthServices.requestPasswordReset(email);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Password reset email sent successfully",
+    data: undefined
+  });
+});
+
+// Controller to reset password
+const resetPassword = catchAsync(async (req, res) => {
+  const { token, newPassword } = req.body;
+  await AuthServices.resetPassword(token, newPassword);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Password reset successfully",
+    data: undefined
+  });
+});
+
 // Controller to update user status (admin-only functionality)
 const updateUserStatus = catchAsync(async (req, res) => {
   const { userId, status } = req.body;
+
+  if (!userId || !status) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User ID and status are required');
+  }
 
   const result = await AuthServices.updateUserStatusById(userId, status);
 
@@ -66,6 +103,10 @@ const updateUserStatus = catchAsync(async (req, res) => {
 // Controller to update user role (admin-only functionality)
 const updateUserRole = catchAsync(async (req, res) => {
   const { userId, role } = req.body;
+
+  if (!userId || !role) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'User ID and role are required');
+  }
 
   const result = await AuthServices.updateUserRoleById(userId, role);
 
@@ -82,6 +123,8 @@ export const AuthControllers = {
   createUser,
   signInUser,
   refreshToken,
+  requestPasswordReset,
+  resetPassword,
   updateUserStatus,
   updateUserRole,
 };

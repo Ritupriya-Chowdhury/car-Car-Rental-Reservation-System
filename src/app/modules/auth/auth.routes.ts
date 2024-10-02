@@ -3,6 +3,8 @@ import validateRequest from '../../middlewares/validateRequest';
 import { UserValidation } from '../user/user.validation';
 import { AuthControllers } from './auth.controller';
 import { AuthZodSchema } from './auth.validation';
+import { USER_ROLE } from '../user/user.constant';
+import auth from '../../middlewares/auth';
 
 
 const router = express.Router();
@@ -24,7 +26,25 @@ router.post(
     AuthControllers.refreshToken
 );
 
-router.patch('/:id', AuthControllers.updateUserStatus);
-router.patch('/:id', AuthControllers.updateUserRole);
+router.patch('/:id', 
+auth(USER_ROLE.admin),
+validateRequest(UserValidation.updateUserValidationSchema), 
+AuthControllers.updateUserStatus);
+router.patch('/:id',
+auth(USER_ROLE.admin),
+validateRequest(UserValidation.updateUserValidationSchema), 
+ AuthControllers.updateUserRole);
+
+ router.post(
+    '/forget-password',
+    validateRequest(AuthZodSchema.forgetPasswordSchema),
+    AuthControllers.requestPasswordReset
+);
+
+router.post(
+    '/reset-password',
+    validateRequest(AuthZodSchema.resetPasswordSchema),
+    AuthControllers.resetPassword
+);
 
 export const AuthRoutes=router;
