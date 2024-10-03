@@ -38,6 +38,7 @@ const createUserIntoDB = async (payload: TUser) => {
 // Sign-in logic for users
 const signInUser = async (payload: TSignInUser) => {
   const user = await User.isUserExistsByEmail(payload.email) as TUserDocument;
+ 
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
@@ -106,18 +107,22 @@ const updateUserRoleById = async (userId: Types.ObjectId, role: 'admin' | 'user'
 
 // Request password reset
 const requestPasswordReset = async (email: string) => {
+  console.log('email:',email)
   const user = await User.isUserExistsByEmail(email) as TUserDocument;
+  
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
   const token = crypto.randomBytes(20).toString('hex');
+  console.log(token)
   user.resetPasswordToken = token;
   user.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour expiration
 
   await user.save();
 
   const resetLink = `${config.reset_password_link}?token=${token}`;
+  console.log(resetLink)
   const message = `You are receiving this email because you (or someone else) have requested the reset of the password for your account.\n\nPlease click on the following link to reset your password:\n\n${resetLink}\n\nIf you did not request this, please ignore this email.`;
 
   await sendEmail(user.email, 'Password Reset Request', message);
@@ -141,6 +146,18 @@ const resetPassword = async (token: string, newPassword: string) => {
   await user.save();
 };
 
+
+// Find user by ID
+const findUserById = async (id: string) => {
+  const user = await User.findById(id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  return user;
+};
+
 export const AuthServices = {
   createUserIntoDB,
   signInUser,
@@ -149,4 +166,5 @@ export const AuthServices = {
   updateUserRoleById,
   requestPasswordReset,
   resetPassword,
+  findUserById
 };

@@ -26,11 +26,11 @@ router.post(
     AuthControllers.refreshToken
 );
 
-router.patch('/:id', 
+router.patch('/user/:id', 
 auth(USER_ROLE.admin),
 validateRequest(UserValidation.updateUserValidationSchema), 
 AuthControllers.updateUserStatus);
-router.patch('/:id',
+router.patch('/user/:id',
 auth(USER_ROLE.admin),
 validateRequest(UserValidation.updateUserValidationSchema), 
  AuthControllers.updateUserRole);
@@ -46,5 +46,12 @@ router.post(
     validateRequest(AuthZodSchema.resetPasswordSchema),
     AuthControllers.resetPassword
 );
+
+router.get(
+    '/user/:id', 
+    auth(USER_ROLE.user),  
+    AuthControllers.findUserById  
+  );
+  
 
 export const AuthRoutes=router;

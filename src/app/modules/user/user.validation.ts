@@ -11,7 +11,11 @@ const userValidationSchema = z.object({
         invalid_type_error: 'Password must be a string',
       })
       .max(20, { message: 'Password can not more than 20 characters' }),
-    phone: z.string(),
+      confirmPassword: z
+      .string({
+        invalid_type_error: 'Password must be a string',
+      }),
+   
     address: z.string(),
     
   }),
@@ -24,6 +28,7 @@ const updateUserValidationSchema = z.object({
       .string({
         invalid_type_error: 'Password must be a string',
       })
+   
       .max(20, { message: 'Password can not more than 20 characters' })
       .optional(),
       

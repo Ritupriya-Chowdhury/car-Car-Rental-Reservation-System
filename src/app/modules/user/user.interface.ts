@@ -6,6 +6,7 @@ export type TUser = {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
   role: 'admin' | 'user';
   phone: string;
   address: string;

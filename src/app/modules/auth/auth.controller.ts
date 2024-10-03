@@ -59,6 +59,7 @@ const refreshToken = catchAsync(async (req, res) => {
 // Controller to request password reset
 const requestPasswordReset = catchAsync(async (req, res) => {
   const { email } = req.body;
+  
   await AuthServices.requestPasswordReset(email);
 
   sendResponse(res, {
@@ -118,6 +119,26 @@ const updateUserRole = catchAsync(async (req, res) => {
   });
 });
 
+
+// Controller to find a user by ID
+const findUserById = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const user = await AuthServices.findUserById(id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User retrieved successfully',
+    data: user,
+  });
+});
+
+
 // Export all controllers
 export const AuthControllers = {
   createUser,
@@ -127,4 +148,5 @@ export const AuthControllers = {
   resetPassword,
   updateUserStatus,
   updateUserRole,
+  findUserById
 };
