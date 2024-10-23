@@ -23,11 +23,7 @@ const userSchema = new Schema<TUserDocument>(
       required: [true, 'Password is required'],
       select: false, 
     },
-    confirmPassword: {
-      type: String,
-      required: [true, 'Password is required'],
-      select: false, 
-    },
+    
     role: {
       type: String,
       enum: ['admin', 'user'],

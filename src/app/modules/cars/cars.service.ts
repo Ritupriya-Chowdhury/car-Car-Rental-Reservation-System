@@ -64,17 +64,17 @@ const getSingleCarFromDB = async (id: string) => {
    
   
  };
- // Get all car from db
- const getAllCarsFromDB = async (filters: any) => {
+// Get all cars from the database
+const getAllCarsFromDB = async (filters: any) => {
   const session = await mongoose.startSession();
-  
+
   try {
     session.startTransaction();
 
     const query: any = { isDeleted: { $ne: true } };
 
     if (filters.name) {
-      query.name = { $regex: filters.name, $options: 'i' };  
+      query.name = { $regex: filters.name, $options: 'i' };
     }
 
     if (filters.type) {
@@ -88,8 +88,15 @@ const getSingleCarFromDB = async (id: string) => {
       };
     }
 
+    // Modify the isElectric filter logic
     if (filters.isElectric !== undefined) {
-      query.isElectric = filters.isElectric;
+      // If isElectric is 'true', show all cars regardless of isElectric value
+      if (filters.isElectric === 'true') {
+        // No additional filter is needed; we won't add isElectric to the query
+      } else {
+        // If isElectric is 'false', filter to only show non-electric cars
+        query.isElectric = false; // Adjust the condition for false
+      }
     }
 
     if (filters.location) {
@@ -97,24 +104,26 @@ const getSingleCarFromDB = async (id: string) => {
     }
 
     if (filters.features && filters.features.length > 0) {
-      query.features = { $all: filters.features };  // Ensure all features match
+      query.features = { $all: filters.features }; // Ensure all features match
     }
 
     if (filters.startDate && filters.endDate) {
       const startDate = new Date(filters.startDate);
       const endDate = new Date(filters.endDate);
-      
+
       query.$or = [
         { status: 'available' },
         {
           $and: [
-            { startDate: { $not: { $lte: endDate } } },  
+            { startDate: { $not: { $lte: endDate } },
+            },
             { endDate: { $not: { $gte: startDate } } },
           ],
         },
       ];
     }
-      console.log(query);
+
+    console.log(query); // Log the query for debugging
     const result = await Cars.find(query);
 
     if (!result.length) {
@@ -131,6 +140,7 @@ const getSingleCarFromDB = async (id: string) => {
     throw new Error(err);
   }
 };
+
 
  //update meeting room
  const updateCarIntoDB = async ( id: string, payload: Partial<TCars>) => {
@@ -165,7 +175,22 @@ const getSingleCarFromDB = async (id: string) => {
   }
    
  };
- 
+
+ const addCustomerReview = async (id: string, reviewObject: { customerReviews: string }) => {
+  const car = await Cars.findById(id);
+
+  if (!car) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Car not found');
+  }
+
+  const review = reviewObject.customerReviews; 
+  console.log(review)
+car.customerReviews.push(review);             
+  await car.save();                            
+
+  return car.customerReviews;                   
+
+};
  
  // Delete room
  const deleteCarFromDB = async (id: string) => {
@@ -243,6 +268,7 @@ const getSingleCarFromDB = async (id: string) => {
     updateCarIntoDB,
     deleteCarFromDB,
     checkCarAvailability, 
+    addCustomerReview
 };
   
   

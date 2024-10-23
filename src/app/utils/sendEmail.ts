@@ -1,24 +1,27 @@
 import nodemailer from 'nodemailer';
 import config from '../config';
 
-const sendEmail = async (to: string, subject: string, text: string) => {
-  console.log(to)
+export const sendEmail = async (to: string,   message: string) => {
+
   const transporter = nodemailer.createTransport({
-    service: 'Gmail', 
-    auth: {
-      user: config.email, 
-      pass: config.email_password, 
-    },
-  });
+   host: 'smtp.gmail.com',
+   port: 465,
+   secure: config.NODE_ENV === 'production',
+   auth: {
+    user: config.email,
+    pass: config.email_password
 
-  const mailOptions = {
-    from: config.email,
-    to,
-    subject,
-    text,
+   }, 
+    });
+
+    try{
+      await transporter.sendMail({
+        from: config.email,
+        to,
+        subject: "User Feedback Message",
+        text: message,
+      });
+    }catch (error){
+      console.log("Error sending email:", error);
+    }
   };
-
-  return await transporter.sendMail(mailOptions);
-};
-
-export default sendEmail;

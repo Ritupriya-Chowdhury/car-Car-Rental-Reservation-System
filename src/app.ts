@@ -12,7 +12,7 @@ const app : Application = express()
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your client's origin
+  origin: ['http://localhost:5173', 'https://stirring-pie-8a9c1b.netlify.app'], 
   credentials: true
 }));
 

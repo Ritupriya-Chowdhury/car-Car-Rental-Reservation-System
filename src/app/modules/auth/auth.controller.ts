@@ -2,8 +2,8 @@ import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 import { AuthServices } from "./auth.service";
-import config from "../../config";
 import AppError from "../../errors/AppError";
+import config from "../../config";
 
 // Controller to handle user creation
 const createUser = catchAsync(async (req, res) => {
@@ -85,13 +85,13 @@ const resetPassword = catchAsync(async (req, res) => {
 
 // Controller to update user status (admin-only functionality)
 const updateUserStatus = catchAsync(async (req, res) => {
-  const { userId, status } = req.body;
+  const { email, status } = req.body;
 
-  if (!userId || !status) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'User ID and status are required');
+  if (!email || !status) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Email and status are required');
   }
 
-  const result = await AuthServices.updateUserStatusById(userId, status);
+  const result = await AuthServices.updateUserStatusByEmail(email, status);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -103,13 +103,13 @@ const updateUserStatus = catchAsync(async (req, res) => {
 
 // Controller to update user role (admin-only functionality)
 const updateUserRole = catchAsync(async (req, res) => {
-  const { userId, role } = req.body;
+  const { email, role } = req.body;
 
-  if (!userId || !role) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'User ID and role are required');
+  if (!email || !role) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Email and role are required');
   }
 
-  const result = await AuthServices.updateUserRoleById(userId, role);
+  const result = await AuthServices.updateUserRoleByEmail(email, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -119,16 +119,12 @@ const updateUserRole = catchAsync(async (req, res) => {
   });
 });
 
+// Controller to find user by email
+const findUserByEmail = catchAsync(async (req, res) => {
+  const email = req.user.email ;
+  
 
-// Controller to find a user by ID
-const findUserById = catchAsync(async (req, res) => {
-  const { id } = req.params;
-
-  const user = await AuthServices.findUserById(id);
-
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
-  }
+  const user = await AuthServices.findUserByEmail(email);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -138,6 +134,40 @@ const findUserById = catchAsync(async (req, res) => {
   });
 });
 
+// Controller for changing the password
+const changePassword = catchAsync(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  const userEmail = req.user.email; 
+
+  await AuthServices.changePassword(userEmail, oldPassword, newPassword); 
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Password changed successfully',
+    data: newPassword,
+  });
+});
+
+// Controller to update user profile
+const updateUserProfile = catchAsync(async (req, res) => {
+  const userEmail = req.user.email; // Assuming the user's email is attached to the request after authentication
+  const updateData = req.body; // The fields to update
+
+  // Ensure that the updateData contains at least one field to update
+  if (Object.keys(updateData).length === 0) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'No fields provided for update');
+  }
+
+  const result = await AuthServices.updateUserProfile(userEmail, updateData);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User profile updated successfully",
+    data: result,
+  });
+});
 
 // Export all controllers
 export const AuthControllers = {
@@ -148,5 +178,7 @@ export const AuthControllers = {
   resetPassword,
   updateUserStatus,
   updateUserRole,
-  findUserById
+  findUserByEmail,
+  changePassword,
+  updateUserProfile, 
 };

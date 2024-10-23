@@ -40,32 +40,29 @@ const getSingleCar = catchAsync(async (req, res,next) => {
 
 // Get All Cars 
 const getAllCars = catchAsync(async (req, res) => {
-  console.log(req.query)
+  console.log(req.query);
+
   const filters = {
-    name: req.query.name as string, 
+    name: req.query.name as string,
     type: req.query.carType as string,
-    
     minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
     maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
-    
-    features: typeof req.query.features === 'string' ? req.query.features.split(',') : [], 
-    isElectric: req.query.isElectric === 'true',
+    features: typeof req.query.features === 'string' ? req.query.features.split(',') : [],
+    isElectric: req.query.isElectric, // Store as string to handle logic in service
     location: req.query.location as string,
-    startDate: req.query.startDate as string, 
-    endDate: req.query.endDate as string,     
+    startDate: req.query.startDate as string,
+    endDate: req.query.endDate as string,
   };
-  console.log(filters.type)
 
-  console.log(filters)
+  console.log(filters); // Log the filters for debugging
+
   const result = await CarsServices.getAllCarsFromDB(filters);
-
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Cars retrieved successfully",
     data: result,
-   
   });
 });
 
@@ -85,6 +82,22 @@ const updateCar = catchAsync(async (req, res) => {
       data: result,
     });
  
+});
+
+const addCustomerReview = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const customerReviews  = req.body; 
+  // console.log( customerReviews)
+  // console.log( id)
+
+  const result = await CarsServices.addCustomerReview(id, customerReviews);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Review added successfully',
+    data: result,
+  });
 });
 
 
@@ -132,6 +145,7 @@ export const CarsControllers = {
   updateCar,
   deleteCar,
   checkCarAvailability,
+  addCustomerReview
 };
 
 

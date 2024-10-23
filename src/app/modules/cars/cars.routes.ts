@@ -11,7 +11,7 @@ const router = express.Router();
 
 // create car route
 router.post(
-  '',
+  '/create-car',
   auth(USER_ROLE.admin),
   validateRequest(CarsZodSchema.createCarsZodSchema),
   CarsControllers.createCars,
@@ -29,6 +29,13 @@ router.put(
   auth(USER_ROLE.admin),
   validateRequest(BookingZodSchema.returnCarZodSchema),
   BookingControllers.returnCar,
+);
+// Customer review
+router.patch(
+  '/customer-review/:id',
+  auth(USER_ROLE.user),
+  validateRequest(CarsZodSchema.addCustomerReview),
+  CarsControllers. addCustomerReview,
 );
 
 //delete car route
