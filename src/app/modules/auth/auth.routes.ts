@@ -26,13 +26,13 @@ router.post(
 );
 
 router.patch(
-  '/user/:email',
+  '/update-status/:email',
   auth(USER_ROLE.admin),
   validateRequest(UserValidation.updateUserValidationSchema),
   AuthControllers.updateUserStatus,
 );
 router.patch(
-  '/user/:email',
+  '/update-role/:email',
   auth(USER_ROLE.admin),
   validateRequest(UserValidation.updateUserValidationSchema),
   AuthControllers.updateUserRole,
@@ -55,6 +55,11 @@ router.get(
   auth( USER_ROLE.user),
   AuthControllers.findUserByEmail,
 );
+router.get(
+  '/all-users',
+  auth(USER_ROLE.admin),
+  AuthControllers.getAllUsers,
+);
 
 router.patch(
   '/password/change',
@@ -67,5 +72,11 @@ router.patch(
   validateRequest(UserValidation.updateUserValidationSchema),
   AuthControllers.updateUserProfile,
 );
+router.delete(
+  '/delete-user/:email',
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  AuthControllers.deleteUser,
+)
+
 
 export const AuthRoutes = router;

@@ -134,6 +134,19 @@ const findUserByEmail = catchAsync(async (req, res) => {
   });
 });
 
+// Controller to get all users
+const getAllUsers = catchAsync(async (req, res) => {
+  const users = await AuthServices.getAllUsers();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Users fetched successfully",
+    data: users,
+  });
+});
+
+
 // Controller for changing the password
 const changePassword = catchAsync(async (req, res) => {
   const { oldPassword, newPassword } = req.body;
@@ -169,6 +182,26 @@ const updateUserProfile = catchAsync(async (req, res) => {
   });
 });
 
+// Controller to soft delete a user
+const deleteUser = catchAsync(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Email is required');
+  }
+
+  const result = await AuthServices.deleteUserByEmail(email); // Service function to soft delete the user
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User deleted successfully",
+    data: result,
+  });
+});
+
+
+
 // Export all controllers
 export const AuthControllers = {
   createUser,
@@ -180,5 +213,8 @@ export const AuthControllers = {
   updateUserRole,
   findUserByEmail,
   changePassword,
-  updateUserProfile, 
+  updateUserProfile,
+  getAllUsers,
+  deleteUser,
+  
 };

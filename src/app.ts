@@ -12,7 +12,9 @@ const app : Application = express()
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://stirring-pie-8a9c1b.netlify.app'], 
+  origin: ['http://localhost:5173', 'https://stirring-pie-8a9c1b.netlify.app',
+ "https://car-rental-reservation-system-six.vercel.app"
+  ], 
   credentials: true
 }));
 

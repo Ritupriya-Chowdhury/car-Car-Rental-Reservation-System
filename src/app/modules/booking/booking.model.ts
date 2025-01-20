@@ -4,7 +4,7 @@ import { TBooking, TBookingResponse } from "./booking.interface";
 const bookingSchema = new Schema<TBooking>({
   date: { type: String, required: true },
   startTime: { type: String, required: true },
-  endTime: { type: String, default: null },
+  endTime: { type: String, default: '00:00'},
   user: {
     type: Types.ObjectId,
     ref: 'User',

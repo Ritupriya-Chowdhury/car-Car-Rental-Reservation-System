@@ -150,8 +150,23 @@ const findUserByEmail = async (email: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   }
 
+  if (user.isDelete) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  if (user.status === 'block') {
+    throw new AppError(httpStatus.FORBIDDEN, 'User is blocked');
+  }
+
   return user;
 };
+
+// AuthService to get all users
+const getAllUsers = async () => {
+  return await User.find({ isDeleted: false }); // Exclude users with isDeleted: true
+};
+
+
 
 // Change user password
 const changePassword = async (email: string, oldPassword: string, newPassword: string) => {
@@ -182,6 +197,20 @@ const updateUserProfile = async (email: string, updates: Partial<TUser>) => {
   return user;
 };
 
+const deleteUserByEmail = async (email: string) => {
+  const user = await User.findOneAndUpdate(
+      { email },
+      { isDeleted: true },
+      { new: true }
+  );
+
+  if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  return { message: 'User soft deleted successfully', user };
+};
+
 export const AuthServices = {
   createUserIntoDB,
   signInUser,
@@ -192,5 +221,7 @@ export const AuthServices = {
   resetPassword,
   findUserByEmail,
   changePassword,
-  updateUserProfile, 
+  updateUserProfile,
+  getAllUsers,
+  deleteUserByEmail 
 };

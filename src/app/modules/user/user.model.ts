@@ -43,6 +43,10 @@ const userSchema = new Schema<TUserDocument>(
       enum: ['activate', 'block'],
       default: 'activate',
     },
+    isDelete: {
+      type: Boolean,
+      default: false,
+    },
     resetPasswordToken: String, 
     resetPasswordExpires: Date,  
   },

@@ -10,6 +10,7 @@ export type TUser = {
   phone: string;
   address: string;
   status: 'activate'| 'block';
+  isDelete?: boolean;
   createdAt:Date;
   updatedAt:Date;
   resetPasswordToken?: string; 
